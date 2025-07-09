@@ -28,8 +28,9 @@ export default function CardCampanha({
   return (
     <div
       style={{
-        backgroundColor: '#1e293b',
-        border: '1px solid #334155',
+        backgroundColor: '#1E1E1E',
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
+        border: '1px solid #333',
         borderRadius: '10px',
         width: '300px',
         overflow: 'hidden',
@@ -70,9 +71,9 @@ export default function CardCampanha({
           <button
             style={{
               flex: 1,
-              backgroundColor: '#2563eb',
-              color: 'white',
-              border: 'none',
+              background: 'transparent',
+              border: '1px solid #3B82F6',
+              color: '#3B82F6',
               padding: '10px',
               borderRadius: '5px',
               cursor: 'pointer',
@@ -82,9 +83,10 @@ export default function CardCampanha({
           </button>
           <button
             style={{
+              background: 'transparent',
+              border: '1px solid #909090',
+              color: '#9CA3AF',
               width: '40px',
-              backgroundColor: '#f1f5f9',
-              border: 'none',
               borderRadius: '5px',
               cursor: 'pointer',
             }}

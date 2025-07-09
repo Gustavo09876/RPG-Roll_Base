@@ -22,6 +22,15 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/page.jsx", "src/app/home/page.jsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/page.jsx",
+    "src/app/home/page.jsx",
+    "src/Components/Chat/ChatMensagens.jsx",
+    "src/Components/Chat/MensagemItem.jsx"
+  ],
   "exclude": ["node_modules"]
 }
