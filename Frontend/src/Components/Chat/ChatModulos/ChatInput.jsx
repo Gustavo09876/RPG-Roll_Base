@@ -114,7 +114,7 @@ export default function ChatInput({
 
       return `<span style="
         white-space: nowrap;
-        background-color: #555;
+        background-color: #60a5fa      ;
         color: white;
         padding: 2px 6px;
         border-radius: 4px;
@@ -170,7 +170,7 @@ export default function ChatInput({
         <div
           style={{
             position: "absolute",
-            top: "70%",
+            top: "60%",
             right: "5px",
             width: "100px",
             height: "100px",

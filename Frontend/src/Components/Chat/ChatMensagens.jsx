@@ -105,55 +105,6 @@ export default function ChatMensagens({ usuarios }) {
         />
       )}
 
-      {/* Preview fixo à direita */}
-      {imagePreviewUrl && (
-        <div
-          style={{
-            position: "absolute",
-            top: "70%",
-            right: "5px",
-            width: "100px",
-            height: "100px",
-            borderRadius: "8px",
-            overflow: "hidden",
-            boxShadow: "0 0 5px rgba(0,0,0,0.3)",
-            zIndex: 10,
-            marginRight: "20px",
-          }}
-        >
-          <img
-            src={imagePreviewUrl}
-            alt="Preview"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-          />
-          <button
-            onClick={clearImagePreview}
-            style={{
-              position: "absolute",
-              top: "2px",
-              right: "2px",
-              background: "rgba(0,0,0,0.6)",
-              color: "white",
-              border: "none",
-              borderRadius: "50%",
-              width: "20px",
-              height: "20px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              lineHeight: "20px",
-              textAlign: "center",
-              padding: 0,
-            }}
-          >
-            ×
-          </button>
-        </div>
-      )}
       {imagemAmpliada && (
         <div
           onClick={() => setImagemAmpliada(null)}
