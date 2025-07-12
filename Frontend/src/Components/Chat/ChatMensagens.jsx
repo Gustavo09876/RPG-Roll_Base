@@ -4,37 +4,18 @@ import SeletorUsuarioPersonagem from "@/Components/Chat/ChatModulos/SeletorUsuar
 import ChatInput from "@/Components/Chat/ChatModulos/ChatInput";
 
 export default function ChatMensagens({ usuarios }) {
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [menuAberto, setMenuAberto] = useState(false);
   const chatEndRef = useRef(null);
-  const inputFileRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [usuarioIndex, setUsuarioIndex] = useState(0);
   const [PersonagemIndex, setPersonagemIndex] = useState(0);
-  const [mensagem, setMensagem] = useState("");
   const [mensagens, setMensagens] = useState([]);
-  const [enviando, setEnviando] = useState(false);
   const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
   const toggleMenu = () => setMenuAberto(!menuAberto);
 
-  const clearImagePreview = () => {
-    setImagePreviewUrl(null);
-    setSelectedFile(null);
-    if (inputFileRef.current) inputFileRef.current.value = "";
-  };
-
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensagens]);
-
-  const getBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
 
   const GMIcon = () => (
     <svg

@@ -2,13 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import ChatMensagens from "../../Components/Chat/ChatMensagens";
+import ChatWrapper from "../../Components/Chat/ChatModulos/ChatWrapper";
 
 export default function GameTable() {
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const [usuarioIndex, setUsuarioIndex] = useState(0);
-  const [PersonagemIndex, setPersonagemIndex] = useState(0);
-
+  const [abaIndex, setAbaIndex] = useState(0);
   type Usuario = {
     id: number;
     name: string;
@@ -372,38 +369,59 @@ export default function GameTable() {
             padding: "15px",
           }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-messages-square-icon lucide-messages-square"
+          <button
+            onClick={() => setAbaIndex(0)}
+            style={{
+              cursor: "pointer",
+              backgroundColor: abaIndex == 0 ? "#303030" : "transparent",
+              padding: "5px",
+              borderRadius: "5px",
+            }}
           >
-            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
-            <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-users-icon lucide-users"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-messages-square-icon lucide-messages-square"
+            >
+              <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
+              <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setAbaIndex(1)}
+            style={{
+              cursor: "pointer",
+              backgroundColor: abaIndex == 1 ? "#303030" : "transparent",
+              padding: "5px",
+              borderRadius: "5px",
+            }}
           >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <circle cx="9" cy="7" r="4" />
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-users-icon lucide-users"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+          </button>
+
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -466,7 +484,11 @@ export default function GameTable() {
             overflowY: "auto",
           }}
         >
-          <ChatMensagens usuarios={usuarios} />
+          {abaIndex == 0 && (
+            <ChatWrapper>
+              <ChatMensagens usuarios={usuarios} />
+            </ChatWrapper>
+          )}
         </div>
       </div>
     </div>

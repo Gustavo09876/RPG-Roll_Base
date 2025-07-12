@@ -95,32 +95,88 @@ export default function ChatInput({
     });
 
   function interpretarTextoComRolagens(texto) {
-    const regex = /\/\/(\d*)d(\d+)\/\//gi;
+    const regex = /\/\/([\dd+\-*/\s]+)\/\/(\s?)/gi;
 
-    return texto.replace(regex, (match, qtdStr, ladosStr) => {
-      const quantidade = qtdStr ? parseInt(qtdStr) : 1;
-      const lados = parseInt(ladosStr);
+    return texto.replace(regex, (match, expressao, espaço) => {
+      const tokens = expressao.match(/(\d*d\d+|\d+|[+\-*/])/g);
+      if (!tokens) return match;
 
-      if (isNaN(quantidade) || isNaN(lados) || quantidade <= 0 || lados <= 0) {
-        return match;
+      const valores = [];
+      const operacoes = [];
+      const detalhes = [];
+      const rolagensBrutas = [];
+
+      for (let token of tokens) {
+        token = token.trim();
+
+        if (/^\d*d\d+$/i.test(token)) {
+          const [qtdStr, ladosStr] = token.toLowerCase().split("d");
+          const quantidade = qtdStr === "" ? 1 : parseInt(qtdStr);
+          const lados = parseInt(ladosStr);
+
+          if (
+            isNaN(quantidade) ||
+            isNaN(lados) ||
+            quantidade <= 0 ||
+            lados <= 0
+          ) {
+            return match;
+          }
+
+          let resultados = [];
+          for (let i = 0; i < quantidade; i++) {
+            resultados.push(Math.floor(Math.random() * lados) + 1);
+          }
+
+          const soma = resultados.reduce((a, b) => a + b, 0);
+          valores.push(soma);
+          detalhes.push(`${quantidade}d${lados}{${resultados.join("+")}}`);
+          rolagensBrutas.push(`[${resultados.join(",")}]`);
+        } else if (/^\d+$/.test(token)) {
+          valores.push(parseInt(token));
+          detalhes.push(token);
+          rolagensBrutas.push(token);
+        } else if (/^[+\-*/]$/.test(token)) {
+          operacoes.push(token);
+          detalhes.push(token);
+          rolagensBrutas.push(token);
+        } else {
+          return match; // inválido
+        }
       }
 
-      const resultados = [];
-      for (let i = 0; i < quantidade; i++) {
-        resultados.push(Math.floor(Math.random() * lados) + 1);
+      let resultado = valores[0];
+      for (let i = 0; i < operacoes.length; i++) {
+        const op = operacoes[i];
+        const val = valores[i + 1];
+        if (op === "+") resultado += val;
+        else if (op === "-") resultado -= val;
+        else if (op === "*") resultado *= val;
+        else if (op === "/") resultado = Math.floor(resultado / val);
       }
 
-      const soma = resultados.reduce((a, b) => a + b, 0);
+      const rolagemStr = `${expressao.trim()} → ${rolagensBrutas.join(" ")} → ${resultado}`;
 
-      return `<span style="
-        white-space: nowrap;
-        background-color: #60a5fa      ;
-        color: white;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: monospace;
-        font-weight: bold;
-      ">🎲 ${soma}</span>`;
+      return (
+        `
+      <span class="dado-rolado" 
+            data-expressao="${rolagemStr}"
+            style="
+              cursor: pointer;
+              position: relative;
+              white-space: nowrap;
+              background-color: #60a5fa;
+              color: white;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-family: monospace;
+              font-weight: bold;
+              margin-right: 4px;
+              display: inline-block;
+            ">
+        🎲 ${resultado}
+      </span> ` + ""
+      );
     });
   }
 
@@ -367,8 +423,6 @@ export default function ChatInput({
               paddingRight: "10px",
             }}
           >
-            {/* Seus SVGs... */}
-            {/* Vou deixar igual seu original */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -395,20 +449,7 @@ export default function ChatInput({
               <circle cx="12" cy="7" r="2" />
               <circle cx="12" cy="17" r="2" />
             </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              fill="none"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="7" y1="20" x2="13" y2="4" />
-              <line x1="11" y1="20" x2="17" y2="4" />
-            </svg>
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

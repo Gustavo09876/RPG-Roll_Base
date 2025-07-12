@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import CardCampanha from "../../Components/CardCampanha/CardCampanha";
-import MensagemItem from "../../Components/Chat/ChatModulos/MensagemItem";
 
 export default function HomePage() {
   const [activeIndex1, setActiveIndex1] = useState(0);
