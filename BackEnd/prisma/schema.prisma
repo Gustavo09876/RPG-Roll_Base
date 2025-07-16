@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String         @id @default(uuid())
+  name            String?
+  email           String         @unique
+  password        String
+  profile_picture String?
+  userTables      UserTable[]
+  Sessions Session[]
+}
+
+model Table {
+  id           String   @id @default(uuid())
+  titulo       String
+  mestre       UserTable   @relation("MestreDeCampanhas", fields: [mestreId], references: [id])
+  mestreId     String
+  sistema      String
+  status       Status   // Enum personalizado abaixo
+  jogadores    String?  // Pode ser adaptado no futuro para uma tabela relacional
+  description  String?
+  ambientacao  String?
+  dificuldade String?
+  imagemUrl    String?
+  createdAt    DateTime @default(now())
+
+  // Relacionamentos
+  user_tables  UserTable[]
+}
+
+enum dificuldade {
+  Iniciante
+  Intermediário
+  Avançado
+}
+
+enum Status {
+  ATIVA
+  RECRUTANDO
+  PAUSADA
+}
+
+
+model UserTable {
+  id        String   @id @default(uuid())
+  userId    String
+  tableId   String
+  role      String
+
+  user      User     @relation(fields: [userId], references: [id])
+  table     Table    @relation(fields: [tableId], references: [id])
+
+  // Campo oposto da relação de mestre
+  campanhasMestradas Table[] @relation("MestreDeCampanhas")
+}
+
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String   @unique
+  valid        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+

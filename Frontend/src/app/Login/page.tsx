@@ -1,6 +1,46 @@
-import React from "react";
+"use client";
+
+import React, { useState, useRef } from "react";
+import api from "../../Services/api";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
+  const [formError, setFormError] = useState("");
+
+  async function Login(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFormError("");
+
+    if (emailInputRef.current?.value && passwordInputRef.current?.value) {
+      const email = emailInputRef.current.value;
+      const pass1 = passwordInputRef.current.value;
+
+      try {
+        const response = await api.post("usuarios/login", {
+          email,
+          password: pass1,
+        });
+
+        router.push("/home");
+      } catch (error: any) {
+        if (error.response && error.response.status === 400) {
+          setFormError("E-mail ou senha incorretos!");
+        } else {
+          setFormError("Erro ao conectar com o servidor");
+          console.error(error);
+        }
+      }
+    } else {
+      setFormError("Preencha todos os campos!");
+    }
+  }
+
   return (
     <div
       style={{
@@ -98,50 +138,67 @@ export default function LoginPage() {
             }}
           />
         </div>
+        <form onSubmit={Login}>
+          <input
+            type="email"
+            placeholder="seu@email.com"
+            ref={emailInputRef}
+            style={{
+              width: "100%",
+              padding: 10,
+              backgroundColor: "#2a2a2d",
+              border: "1px solid #444",
+              borderRadius: 8,
+              marginBottom: 16,
+              color: "#f5f5f5",
+              fontSize: 14,
+            }}
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            ref={passwordInputRef}
+            style={{
+              width: "100%",
+              padding: 10,
+              backgroundColor: "#2a2a2d",
+              border: "1px solid #444",
+              borderRadius: 8,
+              marginBottom: 16,
+              color: "#f5f5f5",
+              fontSize: 14,
+            }}
+          />
+          {formError && (
+            <div
+              style={{
+                color: "red",
+                padding: "10px",
+                borderRadius: "8px",
+                marginBottom: "16px",
+                fontSize: "14px",
+              }}
+            >
+              {formError}
+            </div>
+          )}
 
-        <input
-          type="email"
-          placeholder="seu@email.com"
-          style={{
-            width: "100%",
-            padding: 10,
-            backgroundColor: "#2a2a2d",
-            border: "1px solid #444",
-            borderRadius: 8,
-            marginBottom: 16,
-            color: "#f5f5f5",
-            fontSize: 14,
-          }}
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          style={{
-            width: "100%",
-            padding: 10,
-            backgroundColor: "#2a2a2d",
-            border: "1px solid #444",
-            borderRadius: 8,
-            marginBottom: 16,
-            color: "#f5f5f5",
-            fontSize: 14,
-          }}
-        />
-
-        <button
-          style={{
-            backgroundColor: "#0f62fe", // Azul destaque
-            color: "#fff",
-            width: "100%",
-            padding: 10,
-            borderRadius: 8,
-            fontWeight: 500,
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Entrar
-        </button>
+          <button
+            type="submit"
+            style={{
+              backgroundColor: "#0f62fe", // Azul destaque
+              color: "#fff",
+              width: "100%",
+              padding: 10,
+              borderRadius: 8,
+              fontWeight: 500,
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Entrar
+          </button>
+        </form>
 
         <div
           style={{
@@ -152,7 +209,7 @@ export default function LoginPage() {
             justifyContent: "space-between",
           }}
         >
-          <a
+          <Link
             href="#"
             style={{
               color: "#0f62fe",
@@ -161,11 +218,11 @@ export default function LoginPage() {
             }}
           >
             Esqueceu a senha?
-          </a>
+          </Link>
           <span>
             Não tem uma conta?{" "}
-            <a
-              href="#"
+            <Link
+              href="/Cadastro"
               style={{
                 color: "#0f62fe",
                 fontWeight: 500,
@@ -173,7 +230,7 @@ export default function LoginPage() {
               }}
             >
               Cadastre-se
-            </a>
+            </Link>
           </span>
         </div>
       </div>

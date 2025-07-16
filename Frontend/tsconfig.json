@@ -30,7 +30,8 @@
     "src/app/page.jsx",
     "src/app/home/page.jsx",
     "src/Components/Chat/ChatMensagens.jsx",
-    "src/Components/Chat/MensagemItem.jsx"
+    "src/Components/Chat/MensagemItem.jsx",
+    ".next/types/app/Login/page.tsx"
   ],
   "exclude": ["node_modules"]
 }
