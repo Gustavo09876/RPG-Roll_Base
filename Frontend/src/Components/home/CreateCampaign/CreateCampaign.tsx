@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 interface FormData {
@@ -54,30 +52,6 @@ export default function CreateCampaign({ setActiveIndex1 }: NewTableProps) {
     }
   }
 
-  const criarMesa = async () => {
-    try {
-      const res = await fetch("http://localhost:3001/tables/mesas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // enviar cookies
-        body: JSON.stringify({
-          name: "Mesa de Teste",
-          description: "Mesa criada automaticamente pelo botão",
-          role: "GM",
-        }),
-      });
-
-      if (!res.ok) throw new Error(`Erro ao criar mesa: ${res.status}`);
-
-      const novaMesa = await res.json();
-      // atualiza estado, etc
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -88,7 +62,6 @@ export default function CreateCampaign({ setActiveIndex1 }: NewTableProps) {
     formData.append("ambientacao", form.ambientacao);
     formData.append("dificuldade", form.dificuldade);
     formData.append("jogadores", form.jogadores.toString());
-    formData.append("role", "GM"); // fixo por padrão
     if (form.imagem) {
       formData.append("imagem", form.imagem);
     }
@@ -136,6 +109,7 @@ export default function CreateCampaign({ setActiveIndex1 }: NewTableProps) {
 
       <form
         onSubmit={handleSubmit}
+        encType="multipart/form-data"
         style={{
           display: "flex",
           flexDirection: "row",

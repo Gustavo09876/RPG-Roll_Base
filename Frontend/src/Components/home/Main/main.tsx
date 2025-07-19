@@ -1,7 +1,7 @@
 "use Client";
 
 import { useRouter } from "next/navigation";
-import CardCampanha from "../../Components/CardCampanha/CardCampanha";
+import CardCampanha from "./CardCampanha";
 import { useEffect, useState } from "react";
 
 type Campanha = {
@@ -30,7 +30,6 @@ export default function Main({}) {
         });
 
         if (res.status === 401) {
-          // Usuário não autenticado
           return;
         }
 

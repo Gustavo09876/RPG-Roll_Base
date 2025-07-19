@@ -3,16 +3,17 @@ import { PrismaClient } from "../../../generated/prisma/index.js";
 const prisma = new PrismaClient();
 
 export const getUserTables = async (req, res) => {
+  console.log("Get Mesa");
   const userId = req.userId;
 
   try {
-    const tables = await prisma.userTable.findMany({
-      where: { user_id: userId },
+    const Tables = await prisma.userTable.findMany({
+      where: { userId: userId },
       include: { table: true },
     });
 
-    const result = tables.map((entry) => ({
-      ...entry.table,
+    const result = Tables.map((entry) => ({
+      ...entry.Table,
       role: entry.role,
     }));
 
@@ -23,16 +24,8 @@ export const getUserTables = async (req, res) => {
 };
 
 export const createTable = async (req, res) => {
-  const userId = req.userId;
-  const {
-    name,
-    description,
-    sistema,
-    ambientacao,
-    dificuldade,
-    jogadores,
-    role,
-  } = req.body;
+  const { name, description, sistema, ambientacao, dificuldade, jogadores } =
+    req.body;
 
   if (!name || !sistema) {
     return res.status(400).json({ error: "Campos obrigatórios ausentes." });
@@ -41,6 +34,7 @@ export const createTable = async (req, res) => {
   const imagemUrl = req.file ? req.file.path : null;
 
   try {
+    // Cria a mesa
     const newTable = await prisma.table.create({
       data: {
         titulo: name,
@@ -50,18 +44,35 @@ export const createTable = async (req, res) => {
         dificuldade,
         jogadores,
         imagemUrl,
-        status: "ATIVA", // ou outro valor padrão
-        mestreId: userId,
-        user_tables: {
-          create: {
-            user_id: userId,
-            role: role || "GM",
-          },
-        },
+        status: "ATIVA",
       },
     });
 
-    res.status(201).json(newTable);
+    // Cria o userTable com isGm true
+    console.log("ID do usuário recebido:", req.userId); // deve imprimir o UUID
+
+    await prisma.userTable.create({
+      data: {
+        user: {
+          connect: { id: req.userId },
+        },
+        table: {
+          connect: { id: newTable.id },
+        },
+        role: "GM",
+        isGm: true,
+      },
+    });
+
+    // Retorna a mesa com os usuários ligados a ela
+    const tableWithUsers = await prisma.table.findUnique({
+      where: { id: newTable.id },
+      include: {
+        user_tables: true,
+      },
+    });
+
+    res.status(201).json(tableWithUsers);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao criar mesa" });
@@ -79,7 +90,7 @@ export const updateTable = async (req, res) => {
 
   try {
     // Verifica se o usuário tem permissão na mesa
-    const userTable = await prisma.userTable.findFirst({
+    const userTable = await prisma.UserTable.findFirst({
       where: {
         user_id: userId,
         table_id: id,

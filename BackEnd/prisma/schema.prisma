@@ -9,32 +9,39 @@ datasource db {
 }
 
 model User {
-  id              String         @id @default(uuid())
+  id              String       @id @default(uuid())
   name            String?
-  email           String         @unique
+  email           String       @unique
   password        String
   profile_picture String?
   userTables      UserTable[]
-  Sessions Session[]
+  Sessions        Session[]
 }
 
 model Table {
-  id           String   @id @default(uuid())
+  id           String       @id @default(uuid())
   titulo       String
-  mestre       UserTable   @relation("MestreDeCampanhas", fields: [mestreId], references: [id])
-  mestreId     String
   sistema      String
-  status       Status   // Enum personalizado abaixo
-  jogadores    String?  // Pode ser adaptado no futuro para uma tabela relacional
+  status       Status
+  jogadores    String?
   description  String?
   ambientacao  String?
-  dificuldade String?
+  dificuldade  String?
   imagemUrl    String?
-  createdAt    DateTime @default(now())
-
-  // Relacionamentos
+  createdAt    DateTime     @default(now())
   user_tables  UserTable[]
 }
+
+model UserTable {
+  id        String   @id @default(uuid())
+  userId    String
+  tableId   String
+  role      String
+  isGm      Boolean  @default(false) // 👈 Indica se esse usuário é mestre na mesa
+  user      User     @relation(fields: [userId], references: [id])
+  table     Table    @relation(fields: [tableId], references: [id])
+}
+
 
 enum dificuldade {
   Iniciante
@@ -46,20 +53,6 @@ enum Status {
   ATIVA
   RECRUTANDO
   PAUSADA
-}
-
-
-model UserTable {
-  id        String   @id @default(uuid())
-  userId    String
-  tableId   String
-  role      String
-
-  user      User     @relation(fields: [userId], references: [id])
-  table     Table    @relation(fields: [tableId], references: [id])
-
-  // Campo oposto da relação de mestre
-  campanhasMestradas Table[] @relation("MestreDeCampanhas")
 }
 
 

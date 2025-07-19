@@ -4,6 +4,14 @@ import React, { useState, useRef } from "react";
 import api from "../../Services/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Logo from "../../Components/Logo/Logo";
+import { AuthButton } from "../../Components/Auth/AuthButton";
+import { AuthCard } from "../../Components/Auth/AuthCard";
+import { AuthContainer } from "../../Components/Auth/AuthContainer";
+import { AuthDivider } from "../../Components/Auth/AuthDivider";
+import { InputField } from "../../Components/Auth/AuthInputField";
+import { GoogleSigninButton } from "../../Components/Auth/AuthGoogleSignInButton";
+import { ErrorMessage } from "../../Components/Auth/AuthErrorMessage";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,38 +50,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: "#111315",
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Inter, sans-serif",
-        color: "#ffffff",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "#1c1c1e",
-          width: 380,
-          padding: 32,
-          borderRadius: 12,
-          textAlign: "center",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
-        }}
-      >
-        <img
-          alt="Logo TableTank"
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: "50%",
-            marginBottom: 16,
-            objectFit: "cover",
-            backgroundColor: "#0f0f0f",
-          }}
-        />
+    <AuthContainer>
+      <AuthCard>
+        <Logo size={150} />
         <h2
           style={{
             fontSize: 22,
@@ -87,31 +66,7 @@ export default function LoginPage() {
         </h2>
         <p style={{ color: "#aaa", marginBottom: 24 }}>Entre para continuar</p>
 
-        <button
-          style={{
-            backgroundColor: "#2a2a2d",
-            border: "1px solid #444",
-            borderRadius: 8,
-            width: "100%",
-            padding: 10,
-            fontWeight: 600,
-            color: "#fff",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 8,
-            cursor: "pointer",
-            marginBottom: 16,
-          }}
-        >
-          <img
-            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-            alt="Google Icon"
-            width="20"
-            height="20"
-          />
-          <span>Entrar com o Google</span>
-        </button>
+        <GoogleSigninButton />
 
         <div
           style={{
@@ -129,7 +84,7 @@ export default function LoginPage() {
               backgroundColor: "#333",
             }}
           />
-          <span style={{ margin: "0 12px" }}>OU</span>
+          <AuthDivider />
           <div
             style={{
               flex: 1,
@@ -139,65 +94,19 @@ export default function LoginPage() {
           />
         </div>
         <form onSubmit={Login}>
-          <input
+          <InputField
             type="email"
             placeholder="seu@email.com"
-            ref={emailInputRef}
-            style={{
-              width: "100%",
-              padding: 10,
-              backgroundColor: "#2a2a2d",
-              border: "1px solid #444",
-              borderRadius: 8,
-              marginBottom: 16,
-              color: "#f5f5f5",
-              fontSize: 14,
-            }}
+            inputRef={emailInputRef}
           />
-          <input
+          <InputField
             type="password"
             placeholder="Senha"
-            ref={passwordInputRef}
-            style={{
-              width: "100%",
-              padding: 10,
-              backgroundColor: "#2a2a2d",
-              border: "1px solid #444",
-              borderRadius: 8,
-              marginBottom: 16,
-              color: "#f5f5f5",
-              fontSize: 14,
-            }}
+            inputRef={passwordInputRef}
           />
-          {formError && (
-            <div
-              style={{
-                color: "red",
-                padding: "10px",
-                borderRadius: "8px",
-                marginBottom: "16px",
-                fontSize: "14px",
-              }}
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <ErrorMessage message={formError} />}
 
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#0f62fe", // Azul destaque
-              color: "#fff",
-              width: "100%",
-              padding: 10,
-              borderRadius: 8,
-              fontWeight: 500,
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Entrar
-          </button>
+          <AuthButton type="submit" label="Entrar" />
         </form>
 
         <div
@@ -222,7 +131,7 @@ export default function LoginPage() {
           <span>
             Não tem uma conta?{" "}
             <Link
-              href="/Cadastro"
+              href="/Register"
               style={{
                 color: "#0f62fe",
                 fontWeight: 500,
@@ -233,7 +142,7 @@ export default function LoginPage() {
             </Link>
           </span>
         </div>
-      </div>
-    </div>
+      </AuthCard>
+    </AuthContainer>
   );
 }

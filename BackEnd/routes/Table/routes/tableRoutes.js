@@ -12,7 +12,12 @@ const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
 router.get("/mesas", authenticateToken, getUserTables);
-router.post("/mesas", authenticateToken, upload.single("imagem"), createTable);
+router.post(
+  "/mesas",
+  authenticateToken,
+  upload.fields([{ name: "imagem", maxCount: 1 }]),
+  createTable
+);
 router.put("/mesas/:id", authenticateToken, updateTable);
 
 export default router;

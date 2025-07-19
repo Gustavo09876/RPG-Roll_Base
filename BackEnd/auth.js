@@ -18,9 +18,9 @@ export function authenticateToken(req, res, next) {
       return res.sendStatus(403);
     }
 
-    console.log("Payload do token:", payload);
+    console.log("Payload do token:", payload.userId.userId);
 
-    req.userId = payload.userId?.userId || payload.userId;
+    req.userId = payload.userId.userId;
     console.log("Autenticação bem sucedida. userId:", req.userId);
 
     next();
