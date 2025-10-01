@@ -1,33 +1,55 @@
-interface CardCampanhaProps {
+import { useMemo, useEffect } from "react";
+
+interface CampaignData {
   id: string;
   titulo: string;
-  mestre: string;
   sistema: string;
-  status: "ATIVA" | "RECRUTANDO" | "PAUSADA";
   jogadores: string;
   description: string;
-  ambientacao: string;
-  imagemUrl?: string;
+  imagemUrl: File | string | null;
   created_at: string;
 }
 
+interface CardCampanhaProps extends CampaignData {
+  onEdit: () => void;
+}
+
 export default function CardCampanha({
-  id,
   titulo,
-  mestre,
   sistema,
-  status,
   jogadores,
   description,
-  ambientacao,
   imagemUrl,
-  created_at,
+  onEdit,
 }: CardCampanhaProps) {
   const statusColor = {
     ATIVA: "#16a34a",
     RECRUTANDO: "#0ea5e9",
     PAUSADA: "#facc15",
   };
+
+  // Gera URL da imagem de forma eficiente
+  const imageSrc = useMemo(() => {
+    if (!imagemUrl) return "https://via.placeholder.com/300x120";
+
+    if (imagemUrl instanceof File) return URL.createObjectURL(imagemUrl);
+
+    let correctedUrl = imagemUrl.replace(/\\/g, "/");
+    if (!correctedUrl.startsWith("http")) {
+      correctedUrl = `http://localhost:3001/${correctedUrl}`;
+    }
+
+    return correctedUrl;
+  }, [imagemUrl]);
+
+  // Limpa URLs temporárias de File
+  useEffect(() => {
+    return () => {
+      if (imagemUrl instanceof File) {
+        URL.revokeObjectURL(imageSrc);
+      }
+    };
+  }, [imagemUrl, imageSrc]);
 
   return (
     <div
@@ -46,7 +68,7 @@ export default function CardCampanha({
     >
       <div
         style={{
-          backgroundImage: `url(${imagemUrl ?? "https://via.placeholder.com/300x120"})`,
+          backgroundImage: `url(${imageSrc})`,
           backgroundSize: "cover",
           height: "120px",
           display: "flex",
@@ -65,16 +87,6 @@ export default function CardCampanha({
         >
           🎲 {sistema}
         </span>
-        <span
-          style={{
-            backgroundColor: statusColor[status],
-            fontSize: "12px",
-            padding: "2px 6px",
-            borderRadius: "5px",
-          }}
-        >
-          {status}
-        </span>
       </div>
 
       <div
@@ -85,15 +97,11 @@ export default function CardCampanha({
           gap: "10px",
         }}
       >
-        <div>
-          <h3 style={{ margin: 0, fontSize: "18px" }}>{titulo}</h3>
-          <p style={{ margin: "4px 0", fontSize: "14px" }}>👑 {mestre}</p>
-        </div>
+        <h3 style={{ margin: 0, fontSize: "18px" }}>{titulo}</h3>
         <p style={{ margin: 0, fontSize: "14px", color: "#cbd5e1" }}>
           👥 {jogadores}
         </p>
         <p style={{ fontSize: "13px", color: "#cbd5e1" }}>{description}</p>
-        <p style={{ fontSize: "14px" }}>✨ {ambientacao}</p>
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             style={{
@@ -117,6 +125,7 @@ export default function CardCampanha({
               borderRadius: "5px",
               cursor: "pointer",
             }}
+            onClick={onEdit}
           >
             ✏️
           </button>

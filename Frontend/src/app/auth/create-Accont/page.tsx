@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import api from "../../Services/api";
+import api from "@/Services/api";
 import Link from "next/link";
+import { validateForm } from "./validateForm";
 import { useRouter } from "next/navigation";
-import { AuthButton } from "../../Components/Auth/AuthButton";
-import { AuthCard } from "../../Components/Auth/AuthCard";
-import { AuthContainer } from "../../Components/Auth/AuthContainer";
-import { AuthDivider } from "../../Components/Auth/AuthDivider";
-import { InputField } from "../../Components/Auth/AuthInputField";
-import { GoogleSigninButton } from "../../Components/Auth/AuthGoogleSignInButton";
-import { ErrorMessage } from "../../Components/Auth/AuthErrorMessage";
+import { AuthButton } from "../../../Components/Auth/AuthButton";
+import { AuthCard } from "../../../Components/Auth/AuthCard";
+import { AuthContainer } from "../../../Components/Auth/AuthContainer";
+import { AuthDivider } from "../../../Components/Auth/AuthDivider";
+import { InputField } from "../../../Components/Auth/AuthInputField";
+import { GoogleSigninButton } from "../../../Components/Auth/AuthGoogleSignInButton";
+import { ErrorMessage } from "../../../Components/Auth/AuthErrorMessage";
 
 export default function RegisterPage() {
   const router = useRouter();
-
   const nameInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -26,40 +26,20 @@ export default function RegisterPage() {
     event.preventDefault();
     setFormError("");
 
-    if (
-      nameInputRef.current?.value &&
-      emailInputRef.current?.value &&
-      passwordInputRef.current?.value &&
-      password2InputRef.current?.value
-    ) {
-      const name = nameInputRef.current?.value;
-      const email = emailInputRef.current?.value;
-      const pass1 = passwordInputRef.current?.value;
-      const pass2 = password2InputRef.current?.value;
-      const emailReg = new RegExp(
-        "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
-      );
-      if (!name || name.trim().length < 2) {
-        setFormError("O nome deve ter pelo menos 2 caracteres");
-        return;
-      }
+    const name = nameInputRef.current?.value || "";
+    const email = emailInputRef.current?.value || "";
+    const pass1 = passwordInputRef.current?.value || "";
+    const pass2 = password2InputRef.current?.value || "";
 
-      if (!emailReg.test(email)) {
-        setFormError("E-mail inválido");
-        return;
-      }
+    // Validação usando função externa
+    const error = validateForm(name, email, pass1, pass2);
+    if (error) {
+      setFormError(error);
+      return;
+    }
 
-      if (pass1.length < 8) {
-        setFormError("A senha deve ter pelo menos 8 caracteres");
-        return;
-      }
-
-      if (pass1 !== pass2) {
-        setFormError("As senhas não coincidem");
-        return;
-      }
-
-      const response = await api.get("/usuarios/verificar", {
+    try {
+      const response = await api.get("/usuarios/email-existe", {
         params: { email },
       });
 
@@ -67,23 +47,26 @@ export default function RegisterPage() {
 
       if (exists) {
         setFormError("Email já cadastrado");
-      } else {
-        await api.post("/usuarios/Register", {
-          name,
-          email,
-          password1: pass1,
-          password2: pass2,
-        });
+        return;
       }
-      router.push("/Login");
-    } else {
-      setFormError("Preencha todos os campos");
+
+      await api.post("/usuarios/register", {
+        name,
+        email,
+        password1: pass1,
+        password2: pass2,
+      });
+
+      router.push("/auth/login");
+    } catch (err) {
+      setFormError("Erro ao criar usuário. Tente novamente.");
+      console.error(err);
     }
   }
   return (
     <AuthContainer>
       <AuthCard>
-        <Link href="/Login" passHref>
+        <Link href="/auth/login" passHref>
           <div
             style={{
               textAlign: "left",

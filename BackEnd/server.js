@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
-import usersRoutes from "./routes/User/Users.js";
-import login from "./routes/User/Login.js";
-import register from "./routes/User/Register.js";
-import refresh from "./routes/Refresh.js";
-import tableRoutes from "./routes/Table/routes/tableRoutes.js";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import usersRoutes from "./src/modules/user/user.routes.js";
+import tableRoutes from "./src/modules/table/table.routes.js";
 
 const app = express();
 app.use(
@@ -14,13 +14,17 @@ app.use(
     credentials: true,
   })
 );
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.use(express.json());
 app.use(cookieParser());
 
+// rotas
 app.use("/usuarios", usersRoutes);
-app.use("/usuarios", login);
-app.use("/usuarios", register);
-app.use("/refresh", refresh);
 app.use("/tables", tableRoutes);
 
 app.listen(3001, () => {

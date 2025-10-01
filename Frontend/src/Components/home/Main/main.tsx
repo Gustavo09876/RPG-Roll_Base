@@ -4,28 +4,41 @@ import { useRouter } from "next/navigation";
 import CardCampanha from "./CardCampanha";
 import { useEffect, useState } from "react";
 
-type Campanha = {
+export interface CampaignFormData {
   id: string;
   titulo: string;
-  mestre: string;
   sistema: string;
-  status: "ATIVA" | "RECRUTANDO" | "PAUSADA";
   jogadores: string;
   description: string;
-  ambientacao: string;
-  imagemUrl?: string;
+  imagemUrl: File | string | null;
   created_at: string;
-};
+}
 
-export default function Main({}) {
+interface NewTableProps {
+  setActiveIndex1: (index: number) => void;
+  setCampanhaParaEditar: React.Dispatch<
+    React.SetStateAction<CampaignFormData | null>
+  >;
+}
+
+export default function Main({
+  setActiveIndex1,
+  setCampanhaParaEditar,
+}: NewTableProps) {
   const [activeIndex2, setActiveIndex2] = useState(0);
-  const [campanhas, setCampanhas] = useState<Campanha[]>([]);
+  const [campanhas, setCampanhas] = useState<CampaignFormData[]>([]);
   const router = useRouter();
 
+  function abrirEdicao(campanha: CampaignFormData) {
+    router.push(`/home?id=${campanha.id}`);
+    setCampanhaParaEditar(campanha);
+  }
+
   useEffect(() => {
+    console.log("Teste");
     const fetchCampanhas = async () => {
       try {
-        const res = await fetch("http://localhost:3001/tables/mesas", {
+        const res = await fetch("http://localhost:3001/tables", {
           credentials: "include",
         });
 
@@ -37,6 +50,7 @@ export default function Main({}) {
 
         const data = await res.json();
         setCampanhas(data);
+        console.log("olhar aqui", data);
       } catch (error) {
         console.error("Erro ao carregar campanhas:", error);
       }
@@ -246,7 +260,7 @@ export default function Main({}) {
               justifyContent: "center",
               gap: "10px",
             }}
-            onClick={() => setActiveIndex2(4)}
+            onClick={() => setActiveIndex1(1)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -279,7 +293,11 @@ export default function Main({}) {
           }}
         >
           {campanhas.map((campanha, index) => (
-            <CardCampanha key={index} {...campanha} />
+            <CardCampanha
+              key={index}
+              {...campanha}
+              onEdit={() => abrirEdicao(campanha)}
+            />
           ))}
         </div>
       </div>

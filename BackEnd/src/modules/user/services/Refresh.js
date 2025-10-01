@@ -1,6 +1,9 @@
-import { generateAccessToken, generateRefreshToken } from "../lib/jwt.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../../config/jwt.js";
 import express from "express";
-import { PrismaClient } from "../generated/prisma/index.js";
+import { PrismaClient } from "../../../../generated/prisma/index.js";
 import { promisify } from "util";
 import jwt from "jsonwebtoken";
 

@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import api from "../../Services/api";
+import api from "@/Services/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Logo from "../../Components/Logo/Logo";
-import { AuthButton } from "../../Components/Auth/AuthButton";
-import { AuthCard } from "../../Components/Auth/AuthCard";
-import { AuthContainer } from "../../Components/Auth/AuthContainer";
-import { AuthDivider } from "../../Components/Auth/AuthDivider";
-import { InputField } from "../../Components/Auth/AuthInputField";
-import { GoogleSigninButton } from "../../Components/Auth/AuthGoogleSignInButton";
-import { ErrorMessage } from "../../Components/Auth/AuthErrorMessage";
+import Logo from "../../../Components/Logo/Logo";
+import { AuthButton } from "../../../Components/Auth/AuthButton";
+import { AuthCard } from "../../../Components/Auth/AuthCard";
+import { AuthContainer } from "../../../Components/Auth/AuthContainer";
+import { AuthDivider } from "../../../Components/Auth/AuthDivider";
+import { InputField } from "../../../Components/Auth/AuthInputField";
+import { GoogleSigninButton } from "../../../Components/Auth/AuthGoogleSignInButton";
+import { ErrorMessage } from "../../../Components/Auth/AuthErrorMessage";
+import React, { useState, useRef } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -131,7 +131,7 @@ export default function LoginPage() {
           <span>
             Não tem uma conta?{" "}
             <Link
-              href="/Register"
+              href="/auth/create-Accont"
               style={{
                 color: "#0f62fe",
                 fontWeight: 500,
