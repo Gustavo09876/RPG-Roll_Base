@@ -26,6 +26,10 @@ router.post("/", upload.fields([{ name: "imagem", maxCount: 1 }]), createTable);
 router.get("/:id", getTableById);
 
 // Atualizar mesa
-router.put("/:id", updateTable);
+router.put(
+  "/:id",
+  upload.fields([{ name: "imagem", maxCount: 1 }]),
+  updateTable
+);
 
 export default router;

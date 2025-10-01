@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
 import FormCampaign from "../formCampaign";
 
 export interface CampaignFormData {
   id: string;
-  titulo: string;
+  name: string;
   sistema: string;
   jogadores: string;
   description: string;
@@ -15,58 +13,81 @@ export interface CampaignFormData {
   created_at: string;
 }
 
-interface NewTableProps {
+interface EditCampaignProps {
   setActiveIndex1: (index: number) => void;
+  campaignId: string; // id da campanha que queremos editar
 }
 
-export default function UpdateCampaign({ setActiveIndex1 }: NewTableProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("edit");
+export default function EditCampaign({
+  setActiveIndex1,
+  campaignId,
+}: EditCampaignProps) {
+  const [form, setForm] = useState<CampaignFormData | null>(null);
 
-  const [form, setForm] = useState<CampaignFormData>({
-    id: "", // ou gerar um UUID temporário, se necessário
-    titulo: "",
-    sistema: "",
-    jogadores: "0",
-    description: "",
-    imagemUrl: null,
-    created_at: "",
-  });
+  // Carregar os dados da campanha ao montar o componente
+  useEffect(() => {
+    const fetchCampaign = async () => {
+      try {
+        console.log("ID 3:", campaignId);
+        const response = await fetch(
+          `http://localhost:3001/tables/${campaignId}`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!response.ok) throw new Error("Erro ao buscar campanha");
+        const data = await response.json();
+        setForm(data);
+      } catch (error) {
+        console.error(error);
+        alert("Erro ao carregar campanha");
+      }
+    };
 
-  function handleSubmit(form: CampaignFormData) {
-    const formData = new FormData();
-    formData.append("titulo", form.titulo);
-    formData.append("description", form.description);
-    formData.append("sistema", form.sistema);
-    formData.append("jogadores", form.jogadores.toString());
-    if (form.imagemUrl && typeof form.imagemUrl !== "string") {
-      formData.append("imagem", form.imagemUrl);
+    fetchCampaign();
+  }, [campaignId]);
+
+  const handleSubmit = async (updatedForm: CampaignFormData) => {
+    if (!updatedForm.name || !updatedForm.sistema) {
+      alert("Preencha todos os campos obrigatórios");
+      return;
     }
 
-    fetch(`http://localhost:3001/tables/mesas/${id}`, {
-      method: "PUT",
-      credentials: "include",
-      body: formData,
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const erro = await response.json();
-          console.error("Erro ao atualizar campanha:", erro);
-          return;
+    try {
+      const formData = new FormData();
+      formData.append("name", updatedForm.name);
+      formData.append("sistema", updatedForm.sistema);
+      formData.append("jogadores", updatedForm.jogadores);
+      formData.append("description", updatedForm.description);
+      if (updatedForm.imagemUrl instanceof File) {
+        formData.append("imagem", updatedForm.imagemUrl);
+      }
+
+      const response = await fetch(
+        `http://localhost:3001/tables/${campaignId}`,
+        {
+          method: "PUT",
+          body: formData,
+          credentials: "include",
         }
-        const result = await response.json();
-        console.log("Campanha atualizada com sucesso:", result);
+      );
+
+      if (response.ok) {
+        alert("Campanha atualizada com sucesso!");
         setActiveIndex1(0);
-      })
-      .catch((error) => {
-        console.error("Erro de rede:", error);
-      });
-  }
+      } else {
+        throw new Error("Erro ao atualizar campanha");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao atualizar campanha.");
+    }
+  };
+
+  if (!form) return <p style={{ color: "white" }}>Carregando campanha...</p>;
 
   return (
     <div style={{ padding: "1.5rem", color: "white" }}>
-      {/* Cabeçalho */}
       <div
         style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
       >
@@ -78,26 +99,9 @@ export default function UpdateCampaign({ setActiveIndex1 }: NewTableProps) {
             marginRight: "7px",
             cursor: "pointer",
           }}
-          onClick={() => {
-            setActiveIndex1(0);
-            router.push("/home");
-          }}
+          onClick={() => setActiveIndex1(0)}
         >
-          {/* Ícone de Voltar */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m12 19-7-7 7-7" />
-            <path d="M19 12H5" />
-          </svg>
+          ←
         </button>
         <h1 style={{ fontSize: "1.875rem", fontWeight: "600" }}>
           Editar Campanha
@@ -110,11 +114,13 @@ export default function UpdateCampaign({ setActiveIndex1 }: NewTableProps) {
           marginBottom: "1.5rem",
         }}
       >
-        Modifique as informações da sua aventura
+        Modifique os detalhes da sua aventura
       </p>
-
-      {/* Formulário */}
-      <FormCampaign textButton="Atualizar Campanha" />
+      <FormCampaign
+        textButton="Salvar Alterações"
+        onSubmit={handleSubmit}
+        id={campaignId}
+      />
     </div>
   );
 }

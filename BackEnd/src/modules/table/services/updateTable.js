@@ -1,21 +1,31 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-// Atualizar mesa
-export const updateTable = async (userId, id, data) => {
-  const userTable = await prisma.userTable.findFirst({
-    where: { userId, tableId: id },
-  });
+// Criar mesa
+export const updateTable = async (req, userId, id) => {
+  const { name, description, sistema, ambientacao, dificuldade, jogadores } =
+    req.body;
 
-  if (!userTable) {
-    throw new Error("Você não tem acesso a essa mesa");
+  if (!name || !sistema) {
+    throw new Error("Campos obrigatórios ausentes.");
   }
 
-  return prisma.table.update({
-    where: { id },
+  const imagemFile =
+    req.files && req.files["imagem"] ? req.files["imagem"][0] : null;
+  const imagemUrl = imagemFile ? `uploads/${imagemFile.filename}` : null;
+
+  const updatedTable = await prisma.table.update({
+    where: { id: id },
     data: {
-      name: data.name,
-      description: data.description,
+      titulo: name,
+      description,
+      sistema,
+      ambientacao,
+      dificuldade,
+      jogadores,
+      status: "ATIVA",
+      // Só atualiza a imagem se tiver uma nova
+      ...(imagemUrl ? { imagemUrl } : {}),
     },
   });
 };

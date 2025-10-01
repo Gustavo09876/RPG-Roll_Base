@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation"; // note aqui
 import { useEffect, useState } from "react";
 
 export interface FormData {
@@ -16,16 +15,14 @@ export interface FormData {
 interface FormCampaignProps {
   textButton: string;
   onSubmit: (form: FormData) => void;
+  id?: string; // <- agora id é opcional
 }
 
 export default function FormCampaign({
   textButton,
   onSubmit,
+  id,
 }: FormCampaignProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id") ?? "";
-
   const [form, setForm] = useState<FormData>({
     id: "",
     name: "",
@@ -37,10 +34,9 @@ export default function FormCampaign({
   });
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
+  // 🔹 Se tiver id, busca os dados
   useEffect(() => {
-    console.log("ID da campanha:", id);
     if (id) {
       fetch(`http://localhost:3001/tables/${id}`, {
         method: "GET",
@@ -54,25 +50,27 @@ export default function FormCampaign({
             sistema: data.sistema,
             jogadores: data.jogadores,
             description: data.description,
-            imagemUrl: data.imagemUrl || null,
+            imagemUrl: data.imagemUrl
+              ? `http://localhost:3001/${data.imagemUrl}` // <- completa o caminho
+              : null,
             created_at: data.created_at,
           });
         })
+
         .catch((err) => {
           console.error("Erro ao carregar dados da mesa:", err);
         });
     }
   }, [id]);
 
+  // Preview da imagem
   useEffect(() => {
-    console.log("Form atualizado:", form);
     if (form.imagemUrl instanceof File) {
-      const url = URL.createObjectURL(form.imagemUrl);
-      setPreviewUrl(url);
+      setPreviewUrl(URL.createObjectURL(form.imagemUrl));
     } else {
       setPreviewUrl(form.imagemUrl || null);
     }
-  }, [form]);
+  }, [form.imagemUrl]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -90,7 +88,6 @@ export default function FormCampaign({
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-
     if (file) {
       setForm({ ...form, imagemUrl: file });
       setPreviewUrl(URL.createObjectURL(file));

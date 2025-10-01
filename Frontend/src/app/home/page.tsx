@@ -19,37 +19,10 @@ export interface CampaignFormData {
 
 export default function HomePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [activeIndex1, setActiveIndex1] = useState(0);
   const [campanhaParaEditar, setCampanhaParaEditar] =
     useState<CampaignFormData | null>(null);
-
-  const id = searchParams.get("id");
-
-  useEffect(() => {
-    const fetchMesa = async () => {
-      if (!id || typeof id !== "string") return;
-
-      try {
-        const res = await fetch(`http://localhost:3001/tables/mesas/${id}`, {
-          credentials: "include",
-        });
-
-        if (!res.ok) throw new Error("Campanha não encontrada");
-
-        const data = await res.json();
-        setCampanhaParaEditar(data);
-        setActiveIndex1(4);
-      } catch (error) {
-        console.error(error);
-        setCampanhaParaEditar(null);
-        setActiveIndex1(0);
-      }
-    };
-
-    fetchMesa();
-  }, [id]);
+  const [id, setId] = useState<string | null>(null);
+  const [activeIndex1, setActiveIndex1] = useState(0);
 
   useEffect(() => {
     const fetchCampanhas = async () => {
@@ -85,11 +58,16 @@ export default function HomePage() {
       {activeIndex1 == 0 && (
         <Main
           setActiveIndex1={setActiveIndex1}
-          setCampanhaParaEditar={setCampanhaParaEditar}
+          setCampanhaParaEditar={(campanha) => {
+            setCampanhaParaEditar(campanha);
+          }}
+          setId={setId}
         />
       )}
       {activeIndex1 == 1 && <New_Table setActiveIndex1={setActiveIndex1} />}
-      {activeIndex1 == 4 && <Uptade_Table setActiveIndex1={setActiveIndex1} />}
+      {activeIndex1 == 2 && campanhaParaEditar && (
+        <Uptade_Table setActiveIndex1={setActiveIndex1} campaignId={id!} />
+      )}
     </div>
   );
 }

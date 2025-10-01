@@ -42,7 +42,9 @@ export const updateTable = async (req, res) => {
   try {
     const userId = req.userId;
     const { id } = req.params;
-    const result = await tableService.updateTable(userId, id, req.body);
+    console.log("ID recebido no controller:", id);
+    console.log("Corpo da requisição:", req.body);
+    const result = await tableService.updateTable(req, userId, id);
     return res.json(result);
   } catch (error) {
     console.error("Erro ao atualizar mesa:", error);

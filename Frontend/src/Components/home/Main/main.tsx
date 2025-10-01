@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import CardCampanha from "./CardCampanha";
 import { useEffect, useState } from "react";
+import { init } from "next/dist/compiled/webpack/webpack";
 
 export interface CampaignFormData {
   id: string;
@@ -19,19 +20,23 @@ interface NewTableProps {
   setCampanhaParaEditar: React.Dispatch<
     React.SetStateAction<CampaignFormData | null>
   >;
+  setId: (index: string) => void;
 }
 
 export default function Main({
   setActiveIndex1,
   setCampanhaParaEditar,
+  setId,
 }: NewTableProps) {
   const [activeIndex2, setActiveIndex2] = useState(0);
   const [campanhas, setCampanhas] = useState<CampaignFormData[]>([]);
   const router = useRouter();
 
   function abrirEdicao(campanha: CampaignFormData) {
-    router.push(`/home?id=${campanha.id}`);
+    setActiveIndex1(2);
     setCampanhaParaEditar(campanha);
+    setId(campanha.id);
+    console.log("ID 1", campanha.id);
   }
 
   useEffect(() => {
@@ -292,9 +297,9 @@ export default function Main({
             maxWidth: "1200px",
           }}
         >
-          {campanhas.map((campanha, index) => (
+          {campanhas.map((campanha) => (
             <CardCampanha
-              key={index}
+              key={campanha.id}
               {...campanha}
               onEdit={() => abrirEdicao(campanha)}
             />

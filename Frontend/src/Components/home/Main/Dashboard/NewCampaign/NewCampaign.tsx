@@ -49,10 +49,7 @@ export default function CreateCampaign({ setActiveIndex1 }: NewTableProps) {
       });
 
       if (response.ok) {
-        alert("Campanha criada com sucesso!");
-        // opcional: resetar o formulário, se gerenciado externamente
-      } else {
-        alert("Erro ao criar campanha.");
+        setActiveIndex1(0);
       }
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
