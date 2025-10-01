@@ -32,10 +32,13 @@ export default function CardCampanha({
   const imageSrc = useMemo(() => {
     if (!imagemUrl) return "https://via.placeholder.com/300x120";
 
+    // Se for File, cria URL temporária
     if (imagemUrl instanceof File) return URL.createObjectURL(imagemUrl);
 
-    let correctedUrl = imagemUrl.replace(/\\/g, "/");
-    if (!correctedUrl.startsWith("http")) {
+    // Se for string, verifica se é caminho relativo ou absoluto
+    let correctedUrl = imagemUrl as string;
+    correctedUrl = correctedUrl.replace(/\\/g, "/");
+    if (!/^https?:\/\//.test(correctedUrl)) {
       correctedUrl = `http://localhost:3001/${correctedUrl}`;
     }
 

@@ -54,7 +54,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchCampanhas = async () => {
       try {
-        const res = await fetch("http://localhost:3001/tables/mesas", {
+        const res = await fetch("http://localhost:3001/tables/", {
           credentials: "include",
         });
 

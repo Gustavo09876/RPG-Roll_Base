@@ -12,12 +12,7 @@ export const createTable = async (req, userId) => {
 
   const imagemFile =
     req.files && req.files["imagem"] ? req.files["imagem"][0] : null;
-  const imagemUrl = imagemFile
-    ? `${req.protocol}://${req.get("host")}/${imagemFile.path.replace(
-        /\\/g,
-        "/"
-      )}`
-    : null;
+  const imagemUrl = imagemFile ? `uploads/${imagemFile.filename}` : null;
 
   const newTable = await prisma.table.create({
     data: {
