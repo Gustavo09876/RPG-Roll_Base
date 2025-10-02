@@ -30,7 +30,7 @@ export default function LoginPage() {
       const pass1 = passwordInputRef.current.value;
 
       try {
-        const response = await api.post("usuarios/login", {
+        await api.post("users/login", {
           email,
           password: pass1,
         });

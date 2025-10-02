@@ -39,7 +39,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await api.get("/usuarios/email-existe", {
+      const response = await api.get("/users/verifyEmail", {
         params: { email },
       });
 
@@ -50,7 +50,7 @@ export default function RegisterPage() {
         return;
       }
 
-      await api.post("/usuarios/register", {
+      await api.post("/users/register", {
         name,
         email,
         password1: pass1,

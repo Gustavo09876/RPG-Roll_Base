@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // rotas
-app.use("/usuarios", usersRoutes);
+app.use("/users", usersRoutes);
 app.use("/tables", tableRoutes);
 
 app.listen(3001, () => {

@@ -22,7 +22,7 @@ export function verifyAccessToken(token) {
 export function verifyRefreshToken(token) {
   try {
     return jwt.verify(token, REFRESH_TOKEN_SECRET);
-  } catch (err) {S
+  } catch (err) {
     return null;
   }
 }

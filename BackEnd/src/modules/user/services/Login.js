@@ -48,8 +48,8 @@ export const loginUser = async ({ email, password }) => {
   });
 
   // Gerar tokens
-  const accessToken = generateAccessToken({ userId: user.id });
-  const refreshToken = generateRefreshToken({ sessionId: session.id });
+  const accessToken = generateAccessToken(user.id);
+  const refreshToken = generateRefreshToken(session.id);
 
   // Atualizar refreshToken na sessão
   await prisma.session.update({

@@ -40,14 +40,34 @@ export default function Main({
   }
 
   useEffect(() => {
-    console.log("Teste");
     const fetchCampanhas = async () => {
       try {
-        const res = await fetch("http://localhost:3001/tables", {
+        console.log("Teste1");
+        let res = await fetch("http://localhost:3001/tables", {
           credentials: "include",
         });
 
+        if (res.status === 403) {
+          console.log("Teste2");
+          const refreshRes = await fetch(
+            "http://localhost:3001/users/refresh",
+            {
+              method: "POST",
+              credentials: "include",
+            }
+          );
+          if (refreshRes.ok) {
+            res = await fetch("http://localhost:3001/tables", {
+              credentials: "include",
+            });
+          } else {
+            router.push("/auth/login");
+            return;
+          }
+        }
+
         if (res.status === 401) {
+          router.push("/auth/login");
           return;
         }
 

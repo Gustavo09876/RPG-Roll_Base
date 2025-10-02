@@ -18,34 +18,10 @@ export interface CampaignFormData {
 }
 
 export default function HomePage() {
-  const router = useRouter();
   const [campanhaParaEditar, setCampanhaParaEditar] =
     useState<CampaignFormData | null>(null);
   const [id, setId] = useState<string | null>(null);
   const [activeIndex1, setActiveIndex1] = useState(0);
-
-  useEffect(() => {
-    const fetchCampanhas = async () => {
-      try {
-        const res = await fetch("http://localhost:3001/tables/", {
-          credentials: "include",
-        });
-
-        if (res.status === 401) {
-          router.push("/auth/login");
-          return;
-        }
-
-        if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
-
-        const data = await res.json();
-      } catch (error) {
-        console.error("Erro ao buscar campanhas:", error);
-      }
-    };
-
-    fetchCampanhas();
-  }, [router]);
 
   return (
     <div
